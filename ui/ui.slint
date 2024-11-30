@@ -1,0 +1,294 @@
+ import {LineEdit,Button,ComboBox} from "std-widgets.slint";
+ 
+ export component myapp inherits Window {
+    in property <bool> openstatus: false;
+    in-out property <bool> open_action: false;
+    in-out property <bool> close_action: false;
+    in property comlist <=> compick.model;
+    out property current_com <=> compick.current-value;
+    out property <string> printer_sn <=> sn.text;
+    out property <string> printer_name <=> name.text;
+    in property <string> appname <=> root.title;
+    in property <string> portstatus_text <=> portstatus.text;
+    in property <brush> portstatus_color <=> portstatus.color;
+    callback openport;
+    callback closeport;
+    callback refreshport;
+    callback printline;
+    callback printlabel;
+    callback selftest;
+    callback headtest;
+    callback sftest;
+    callback writename;
+    callback writesn;
+    callback paperpwm;
+
+    width: 450px;
+    height: 350px;
+    icon: @image-url("../assets/logo.png");
+    VerticalLayout {
+        padding: 15px;
+        spacing: 3px;
+        alignment: start;
+        Text {
+            text: "打印机连接";
+            font-size: 15px;
+            x: 15px;
+            //color:blue;
+			font-weight: 550;
+        }
+
+        HorizontalLayout {
+            // height: 45px;
+        x: 15px;
+            alignment: start;
+            //padding: 5px;
+        spacing: 5px;
+            VerticalLayout {
+                alignment: center;
+                Text {
+                    text: "端口号:";
+                }
+            }
+
+            VerticalLayout {
+                alignment: center;
+                compick := ComboBox {
+                    width: 100px;
+                    current-value: "选择端口";
+                    current-index: 0;
+                    vertical-stretch: 0;
+                }
+            }
+
+            VerticalLayout {
+                alignment: center;
+                if openstatus: Button {
+                    //padding-left: 5px;
+                    text: "关闭端口";
+                    //height: 25px;
+					clicked => {
+                        root.closeport()
+                    }
+                }
+                if !openstatus: Button {
+                    //padding-left: 5px;
+                    text: "打开端口";
+                    //height: 25px;
+                clicked => {
+                        root.openport()
+                    }
+                }
+            }
+
+            VerticalLayout {
+                alignment: center;
+                Button {
+                    //padding-left: 5px;
+                    text: "刷新端口列表";
+                    //height: 25px;
+					 clicked => {
+                        root.refreshport()
+                    }
+                }
+            }
+        }
+
+        Text {
+            text: "测试";
+            font-size: 15px;
+            x: 5px;
+            font-weight: 550;
+        }
+
+        HorizontalLayout {
+            // padding: 15px;
+            spacing: 5px;
+            alignment: start;
+            VerticalLayout {
+                alignment: center;
+                Button {
+                    padding-left: 5px;
+                    text: "走纸";
+                    enabled: openstatus ? true : false;
+                    //height: 25px;
+					 clicked => {
+                        root.printline()
+                    }
+                }
+            }
+
+            VerticalLayout {
+                alignment: center;
+                Button {
+                    padding-left: 5px;
+                    text: "走标签";
+                    enabled: openstatus ? true : false;
+                    //height: 25px;
+					 clicked => {
+                        root.printlabel()
+                    }
+                }
+            }
+
+            VerticalLayout {
+                alignment: center;
+                Button {
+                    padding-left: 5px;
+                    text: "自检页";
+                    enabled: openstatus ? true : false;
+                    //height: 25px;
+					 clicked => {
+                        root.selftest()
+                    }
+                }
+            }
+
+            VerticalLayout {
+                alignment: center;
+                Button {
+                    padding-left: 5px;
+                    text: "打印头测试";
+                    enabled: openstatus ? true : false;
+                    //height: 25px;
+					 clicked => {
+                        root.headtest()
+                    }
+                }
+            }
+
+            VerticalLayout {
+                alignment: center;
+                Button {
+                    padding-left: 5px;
+                    text: "顺丰样张";
+                    enabled: openstatus ? true : false;
+                    //height: 25px;
+					 clicked => {
+                        root.sftest()
+                    }
+                }
+            }
+        }
+
+        Text {
+            text: "设置打印机名称";
+            font-size: 15px;
+            x: 15px;
+            font-weight: 550;
+        }
+
+        HorizontalLayout {
+            // height: 45px;
+        x: 15px;
+            alignment: start;
+            //padding: 5px;
+        spacing: 15px;
+            VerticalLayout {
+                alignment: center;
+                Text {
+                    text: "设备名称";
+                }
+
+                VerticalLayout { }
+            }
+
+            VerticalLayout {
+                alignment: center;
+                name := LineEdit {
+                    //height: 25px;
+                    width: 250px;
+                }
+            }
+
+            VerticalLayout {
+                Button {
+                    padding-left: 5px;
+                    text: "写入";
+                    enabled: openstatus ? true : false;
+                    //height: 25px;
+					clicked => {
+                        root.writename()
+                    }
+                }
+            }
+        }
+
+        Text {
+            text: "设置出厂编码";
+            font-size: 15px;
+            x: 15px;
+            font-weight: 550;
+        }
+
+        HorizontalLayout {
+            x: 15px;
+            //height: 45px;
+        alignment: start;
+            //padding: 5px;
+        spacing: 15px;
+            VerticalLayout {
+                alignment: center;
+                Text {
+                    text: "出厂编码";
+                }
+            }
+
+            VerticalLayout {
+                alignment: center;
+                sn := LineEdit {
+                    //height: 25px;
+                    width: 250px;
+                }
+            }
+
+            VerticalLayout {
+                alignment: center;
+                Button {
+                    padding-left: 5px;
+                    text: "写入";
+                    enabled: openstatus ? true : false;
+                    //height: 25px;
+					clicked => {
+                        root.writesn()
+                    }
+                }
+            }
+        }
+
+        Text {
+            text: "传感器校验";
+            font-size: 15px;
+            x: 15px;
+            font-weight: 550;
+        }
+
+        HorizontalLayout {
+            alignment: start;
+            Button {
+                text: "纸存在校验";
+                enabled: openstatus ? true : false;
+                clicked => {
+                    root.paperpwm()
+                }
+            }
+        }
+    }
+
+    HorizontalLayout {
+        y: root.height - 25px;
+        x: 15px;
+        portstatus := Text {
+            text: "端口未打开";
+            color: red;
+        }
+    }
+
+    HorizontalLayout {
+        x: root.width - 180px;
+        y: root.height - 25px;
+        au := Text {
+            text: "ThinJade";
+        }
+    }
+}

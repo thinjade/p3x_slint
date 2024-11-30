@@ -1,0 +1,22 @@
+[package]
+name = "p3x_slint"
+version = "0.2.0"
+edition = "2021"
+
+[dependencies]
+#slint = "*"
+slint = {version = "*" , default-features = false ,features = ["backend-winit","renderer-femtovg","compat-1-2"]}
+serial2="*"
+i-slint-backend-winit = "*"
+shadow-rs= "*"
+
+[build-dependencies]
+slint-build = "*"
+shadow-rs= "*"
+
+[profile.release]
+strip = true
+opt-level = "z"
+lto = true
+codegen-units = 1
+panic = "abort"
